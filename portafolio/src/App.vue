@@ -104,22 +104,22 @@ const closeMenu = () => {
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="right" class="w-[300px] flex items-center">
+      <SheetContent side="right" class="w-[300px]  ">
         <SheetHeader >
           <SheetTitle class="text-left font-bold">Kikor7 dev</SheetTitle>
           <SheetDescription class="text-left">Navegación del sitio</SheetDescription>
         </SheetHeader>
-        <nav class="flex flex-col gap-4 mt-6">
-          <RouterLink to="/" @click="closeMenu" class="text-lg font-semibold hover:text-primary transition-colors ">
+        <nav class="flex flex-col gap-4 mt-6 ml-6 justify-center">
+          <RouterLink to="/" @click="closeMenu" class="text-2xl font-semibold hover:text-primary transition-colors ">
             Inicio
           </RouterLink>
-          <RouterLink to="/proyectos" @click="closeMenu" class="text-lg font-semibold hover:text-primary transition-colors">
+          <RouterLink to="/proyectos" @click="closeMenu" class="text-2xl font-semibold hover:text-primary transition-colors">
             Proyectos
           </RouterLink>
-          <RouterLink to="/sobre-mi" @click="closeMenu" class="text-lg font-semibold hover:text-primary transition-colors">
+          <RouterLink to="/sobre-mi" @click="closeMenu" class="text-2xl font-semibold hover:text-primary transition-colors">
             Sobre mí
           </RouterLink>
-          <RouterLink to="/contacto" @click="closeMenu" class="text-lg font-semibold hover:text-primary transition-colors">
+          <RouterLink to="/contacto" @click="closeMenu" class="text-2xl font-semibold hover:text-primary transition-colors">
             Contacto
           </RouterLink>
         </nav>
