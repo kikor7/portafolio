@@ -133,7 +133,12 @@ const closeMenu = () => {
 
 <main class="flex flex-col lg:flex-row w-full max-w-7xl mx-auto items-start justify-between gap-8 px-4 py-10 transition-colors duration-300">
   
-  <section class="w-full lg:flex-1 bg-white text-slate-900 border border-slate-100 shadow-xl rounded-3xl p-8 md:p-12 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-800">
+  <section class="w-full lg:flex-1 bg-white text-slate-900 border border-slate-100 shadow-xl rounded-3xl p-8 md:p-12 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-800 relative overflow-hidden rounded-3xl bg-white border-slate-200 shadow-xl transition-all duration-300 hover:shadow-2xl 
+         /* 1. Cambiada la rotación hacia la derecha e invertido el eje Z */
+         md:[transform:rotateX(6deg)_rotateY(12deg)_rotateZ(-2deg)] 
+         hover:[transform:none] 
+         /* 2. Trucos anti-desenfoque */
+         transform-gpu [backface-visibility:hidden]">
     
     <div class="mb-6">
       <Badge variant="outline" class="border-slate-200 text-slate-600 font-medium px-3 py-1 bg-slate-50 rounded-full text-xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
@@ -222,7 +227,7 @@ const closeMenu = () => {
   </section>
 
   <div class="w-full lg:max-w-xl [perspective:1000px] px-4">
-    <Card class="relative overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-xl transition-all duration-300 hover:shadow-2xl md:[transform:rotateX(6deg)_rotateY(12deg)_rotateZ(-2deg)] hover:[transform:none] transform-gpu [backface-visibility:hidden] dark:bg-slate-900 dark:border-slate-800">
+    <Card class="relative overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-xl transition-all duration-300 hover:shadow-2xl md:[transform:rotateX(6deg)_rotateY(-12deg)_rotateZ(2deg)] hover:[transform:none] dark:bg-slate-900 dark:border-slate-800">
       
       <a href="https://vuejs.org" target="_blank" class="absolute top-4 left-4 z-20 flex gap-2 cursor-pointer">
         <Badge variant="secondary" class="bg-white/80 text-slate-800 hover:bg-[#3ca675] rounded-full px-3 py-1 text-xs font-medium shadow-sm transition-colors dark:bg-slate-900/80 dark:text-white dark:hover:bg-[#3ca675]">
