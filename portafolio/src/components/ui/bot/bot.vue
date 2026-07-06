@@ -4,6 +4,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 
+const props = defineProps<{
+  navegarSeccion?: (idSeccion: string) => void
+}>()
+
 const isOpen = ref(false)
 const contenedorMensajes = ref<HTMLElement | null>(null)
 
@@ -12,7 +16,7 @@ const mensajes = ref([
 ])
 
 const opciones = ref([
-  { id: 'proyectos', texto: '📁 Ver proyecto estrella' },
+  { id: 'proyectos', texto: '📁 Ver proyectos' },
   { id: 'stack', texto: '⚡ Ver tecnologías' },
   { id: 'contacto', texto: '📧 Contactar con él' }
 ])
@@ -22,10 +26,13 @@ const seleccionarOpcion = async (idOpcion: string, textoOpcion: string) => {
   await nextTick()
   hacerScroll()
 
+  const seccionDestino = idOpcion === 'proyectos' ? 'proyectos' : idOpcion === 'stack' ? 'tecnologias' : 'contacto'
+  props.navegarSeccion?.(seccionDestino)
+
   setTimeout(async () => {
     let respuestaBot = ''
     if (idOpcion === 'proyectos') {
-      respuestaBot = '🚀 Su proyecto estrella actual es una aplicación web donde ver noticas japonesas y jugar un minijuego, desarrollada con Vue 3, Vite y Supabase.'
+      respuestaBot = '🚀 Sus proyectos más destacados son una aplicación web para ver noticias japonesas y un minijuego, desarrollada con Vue 3, Vite y Supabase.'
     } else if (idOpcion === 'stack') {
       respuestaBot = '💻 Kiko domina el desarrollo Frontend. Su stack principal incluye Vue.js (Composition API), TypeScript, Tailwind CSS y componentes de Shadcn.'
     } else if (idOpcion === 'contacto') {

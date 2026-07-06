@@ -45,7 +45,7 @@ import {
 
 import ThemeToggle from '@/components/ui/ThemeToggle.vue'
 
-import { ref } from 'vue'
+import { ref, type ComponentPublicInstance } from 'vue'
 const isOpen = ref(false)
 
 const closeMenu = () => {
@@ -71,26 +71,17 @@ const handleSubmit = () => {
 import { techBadges, highlights, stats, timeline } from './sobre-mi-constants'
 import { proyectos } from './proyectos-constants'
 
-// Creamos la referencia para la sección
-const seccionInicio = ref<HTMLElement | null>(null);
-const seccionSobreMi = ref<HTMLElement | null>(null);
-const seccionProyectos = ref<HTMLElement | null>(null);
-const seccionTecnologias = ref<HTMLElement | null>(null);
-const seccionContacto = ref<HTMLElement | null>(null);
+// Un único objeto para guardar las secciones registradas desde el template
+const secciones = ref<Record<string, HTMLElement | null>>({});
 
-// Función que hace el scroll
-const irAInicio = (event?: Event) => {
-  event?.preventDefault();
-  seccionInicio.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+const registrarSeccion = (elemento: Element | ComponentPublicInstance | null, clave: string) => {
+  if (elemento instanceof HTMLElement) {
+    secciones.value[clave] = elemento;
+  }
 };
 
-const irAContacto = (event?: Event) => {
-  event?.preventDefault();
-  seccionContacto.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-const irASobreMi = (event?: Event) => {
-  event?.preventDefault();
-  seccionSobreMi.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+const irASeccion = (idSeccion: string) => {
+  secciones.value[idSeccion]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
 
@@ -109,42 +100,31 @@ const irASobreMi = (event?: Event) => {
       <NavigationMenuList>
 
         <NavigationMenuItem>
-          <NavigationMenuLink href="#inicio" @click="irAInicio" :class="navigationMenuTriggerStyle()">
+          <NavigationMenuLink href="#inicio" @click.prevent="irASeccion('inicio')" :class="navigationMenuTriggerStyle()">
             Inicio
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink href="#sobre-mí" @click="irASobreMi" :class="navigationMenuTriggerStyle()">
+          <NavigationMenuLink href="#sobre-mi" @click.prevent="irASeccion('sobre-mi')" :class="navigationMenuTriggerStyle()">
             Sobre mí
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink href="/about" :class="navigationMenuTriggerStyle()">
+          <NavigationMenuLink href="#proyectos" @click.prevent="irASeccion('proyectos')" :class="navigationMenuTriggerStyle()">
             Proyectos
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Tecnologías</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul class="grid w-[400px] gap-3 p-4">
-              <li>
-                <NavigationMenuLink as-child>
-                  <a href="/link1"
-                    class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                    <div class="text-sm font-medium leading-none">Imagen VUE.JS</div>
-                    <p class="line-clamp-2 text-sm leading-snug text-muted-foreground">Descripción del link</p>
-                  </a>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
+          <NavigationMenuLink href="#tecnologias" @click.prevent="irASeccion('tecnologias')" :class="navigationMenuTriggerStyle()">
+            Tecnologías
+          </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink @click="irAContacto" href="#contacto"
+          <NavigationMenuLink @click.prevent="irASeccion('contacto')" href="#contacto"
             :class="[navigationMenuTriggerStyle(), 'bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 dark:hover:bg-blue-950/70']">
             Contacto
           </NavigationMenuLink>
@@ -170,18 +150,23 @@ const irASobreMi = (event?: Event) => {
           <SheetDescription class="text-left">Navegación del sitio</SheetDescription>
         </SheetHeader>
         <nav class="flex flex-col gap-4 mt-6 ml-6 justify-center">
-          <RouterLink to="/" @click="closeMenu" class="text-2xl font-semibold hover:text-primary transition-colors ">
-            Inicio
-          </RouterLink>
-          <RouterLink to="/proyectos" @click="closeMenu"
+          <a href="#inicio" @click.prevent="closeMenu(); irASeccion('inicio')"
             class="text-2xl font-semibold hover:text-primary transition-colors">
-            Proyectos
-          </RouterLink>
-          <RouterLink to="/sobre-mi" @click="closeMenu"
+            Inicio
+          </a>
+          <a href="#sobre-mi" @click.prevent="closeMenu(); irASeccion('sobre-mi')"
             class="text-2xl font-semibold hover:text-primary transition-colors">
             Sobre mí
-          </RouterLink>
-          <a href="#contacto" @click="(event) => { closeMenu(); irAContacto(event) }"
+          </a>
+          <a href="#proyectos" @click.prevent="closeMenu(); irASeccion('proyectos')"
+            class="text-2xl font-semibold hover:text-primary transition-colors">
+            Proyectos
+          </a>
+          <a href="#tecnologias" @click.prevent="closeMenu(); irASeccion('tecnologias')"
+            class="text-2xl font-semibold hover:text-primary transition-colors">
+            Tecnologías
+          </a>
+          <a href="#contacto" @click.prevent="closeMenu(); irASeccion('contacto')"
             class="text-2xl font-semibold hover:text-primary transition-colors">
             Contacto
           </a>
@@ -190,7 +175,7 @@ const irASobreMi = (event?: Event) => {
     </Sheet>
   </header>
 
-  <main ref="seccionInicio" id="inicio"
+  <main :ref="(el) => registrarSeccion(el, 'inicio')" id="inicio"
     class="flex flex-col lg:flex-row w-full max-w-7xl mx-auto items-start justify-between gap-8 px-4 py-10 transition-colors duration-300">
 
     <section class="w-full lg:flex-1 bg-white text-slate-900 border border-slate-100 shadow-xl rounded-3xl p-8 md:p-12 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-800 relative overflow-hidden rounded-3xl bg-white border-slate-200 shadow-xl transition-all duration-300 hover:shadow-2xl 
@@ -257,6 +242,7 @@ const irASobreMi = (event?: Event) => {
       <div class="flex flex-wrap items-center gap-4">
 
         <Button
+          @click.prevent="irASeccion('proyectos')"
           class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 rounded-xl h-11 transition-all group shadow-lg shadow-indigo-600/10">
           Ver proyectos
           <ArrowUpRight
@@ -266,7 +252,7 @@ const irASobreMi = (event?: Event) => {
         <Button variant="outline"
           class="border-slate-200 bg-transparent text-slate-700 hover:bg-slate-50 font-medium px-6 rounded-xl h-11 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800"
           as-child>
-          <a href="#contacto" @click="irAContacto" title="Llamar al +34 648 04 72 79">
+          <a href="#contacto" @click.prevent="irASeccion('contacto')" title="Llamar al +34 648 04 72 79">
             Contactar
           </a>
         </Button>
@@ -364,7 +350,7 @@ const irASobreMi = (event?: Event) => {
   </main>
 
  
-  <section ref="seccionSobreMi" id="sobre-mi" class="scroll-mt-24 min-h-screen bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 py-16 px-4 md:px-8 font-sans selection:bg-indigo-100 dark:selection:bg-indigo-900/50">
+  <section :ref="(el) => registrarSeccion(el, 'sobre-mi')" id="sobre-mi" class="scroll-mt-24 min-h-screen bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 py-16 px-4 md:px-8 font-sans selection:bg-indigo-100 dark:selection:bg-indigo-900/50">
     <div class="max-w-5xl mx-auto space-y-12">
 
       <div class="space-y-4 max-w-3xl">
@@ -478,7 +464,7 @@ const irASobreMi = (event?: Event) => {
     </div>
   </section>
 
-  <section id="proyectos" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200 py-20 px-4 md:px-8 border-t border-slate-200/60 dark:border-slate-800/60 font-sans">
+  <section :ref="(el) => registrarSeccion(el, 'proyectos')" id="proyectos" class="scroll-mt-24 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200 py-20 px-4 md:px-8 border-t border-slate-200/60 dark:border-slate-800/60 font-sans">
     <div class="max-w-5xl mx-auto space-y-12">
       
       <div class="space-y-4 max-w-3xl">
@@ -561,7 +547,37 @@ const irASobreMi = (event?: Event) => {
     </div>
   </section>
 
-  <section ref="seccionContacto" id="contacto" class="scroll-mt-24 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 py-20 px-4 md:px-8 border-t border-slate-200/60 dark:border-slate-800/60 font-sans">
+  <section :ref="(el) => registrarSeccion(el, 'tecnologias')" id="tecnologias" class="scroll-mt-24 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 py-20 px-4 md:px-8 border-t border-slate-200/60 dark:border-slate-800/60 font-sans">
+    <div class="max-w-5xl mx-auto space-y-12">
+      <div class="space-y-4 max-w-3xl">
+        <span class="inline-flex items-center rounded-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+          <component :is="Code2" class="w-3 h-3 mr-1.5 text-indigo-500" />
+          Tecnologías
+        </span>
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          Herramientas y tecnologías con las que trabajo
+        </h2>
+        <p class="text-slate-500 dark:text-slate-400 text-lg leading-relaxed">
+          Desarrollo con un stack moderno, enfocado en rendimiento, claridad y experiencias web atractivas.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          v-for="tech in techBadges"
+          :key="tech.name"
+          :class="['rounded-2xl border p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5', tech.color]"
+        >
+          <div class="flex items-center gap-2">
+            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-current" />
+            <h3 class="text-sm font-semibold text-slate-900 dark:text-white">{{ tech.name }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section :ref="(el) => registrarSeccion(el, 'contacto')" id="contacto" class="scroll-mt-24 bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 py-20 px-4 md:px-8 border-t border-slate-200/60 dark:border-slate-800/60 font-sans">
     <div class="max-w-5xl mx-auto space-y-12">
       
       <div class="space-y-4 max-w-3xl">
@@ -704,5 +720,5 @@ const irASobreMi = (event?: Event) => {
   </footer>
 
 
-  <Bot />
+  <Bot :navegar-seccion="irASeccion" />
 </template>
